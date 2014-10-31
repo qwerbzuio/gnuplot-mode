@@ -834,7 +834,7 @@ non-nil."
        :selected (eq gnuplot-inline-image-mode 'comint)]
       ["In dedicated buffer" gnuplot-dedicated-display-mode
        :style toggle
-       :selected (eq gnuplot-inline-image-mode 'comint)]
+       :selected (eq gnuplot-inline-image-mode 'dedicated)]
       "---"
       ,@(mapcar #'make-image-setter (list "png" "jpeg" "svg"))
       ["Other image type..." gnuplot-set-image-format])))
