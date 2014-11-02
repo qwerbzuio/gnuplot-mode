@@ -420,6 +420,12 @@ real work."
                (unless ,modified
                  (restore-buffer-modified-p nil))))))
     (defalias 'gnuplot-with-silent-modifications 'with-silent-modifications)))
+
+;; Workaround obsolete `process-kill-without-query'
+(if (fboundp 'set-process-query-on-exit-flag)
+    (defalias 'gnuplot-set-process-query-on-exit-flag 'set-process-query-on-exit-flag)
+  (defalias 'gnuplot-set-process-query-on-exit-flag 'process-kill-without-query))
+
 
 ;;;;
 (defconst gnuplot-xemacs-p (string-match "XEmacs" (emacs-version)))
@@ -2337,19 +2343,18 @@ buffer."
 ;; Switch to the gnuplot program buffer
 (defun gnuplot-make-gnuplot-buffer ()
   "Switch to the gnuplot program buffer or create one if none exists."
-  (or (and gnuplot-process (get-process gnuplot-process)
-	   gnuplot-buffer (buffer-name gnuplot-buffer))
-      (progn
-	(message "Starting gnuplot plotting program...")
-	(setq gnuplot-buffer (make-comint gnuplot-process-name gnuplot-program)
-	      gnuplot-process (get-buffer-process gnuplot-buffer))
-	(process-kill-without-query gnuplot-process nil)
-	(with-current-buffer gnuplot-buffer
-	  (gnuplot-comint-mode)
-          (when gnuplot-inline-image-mode
-            (sleep-for gnuplot-delay)
-            (gnuplot-setup-comint-for-image-mode)))
-	  (message "Starting gnuplot plotting program...Done"))))
+  (unless (and gnuplot-process (eq (process-status gnuplot-process) 'run)
+               gnuplot-buffer (buffer-live-p gnuplot-buffer))
+    (message "Starting gnuplot plotting program...")
+    (setq gnuplot-buffer (make-comint gnuplot-process-name gnuplot-program)
+          gnuplot-process (get-buffer-process gnuplot-buffer))
+    (gnuplot-set-process-query-on-exit-flag gnuplot-process nil)
+    (with-current-buffer gnuplot-buffer
+      (gnuplot-comint-mode)
+      (when gnuplot-inline-image-mode
+        (sleep-for gnuplot-delay)
+        (gnuplot-setup-comint-for-image-mode)))
+    (message "Starting gnuplot plotting program...Done")))
 
 (defun gnuplot-fetch-version-number ()
   "Determine the installed version of the gnuplot program.
