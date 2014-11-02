@@ -2343,13 +2343,13 @@ buffer."
 	(message "Starting gnuplot plotting program...")
 	(setq gnuplot-buffer (make-comint gnuplot-process-name gnuplot-program)
 	      gnuplot-process (get-process gnuplot-process-name))
-        (set-process-query-on-exit-flag gnuplot-process nil)
+	(process-kill-without-query gnuplot-process nil)
 	(with-current-buffer gnuplot-buffer
 	  (gnuplot-comint-mode)
           (when gnuplot-inline-image-mode
             (sleep-for gnuplot-delay)
             (gnuplot-setup-comint-for-image-mode)))
-        (message "Starting gnuplot plotting program...Done"))))
+	  (message "Starting gnuplot plotting program...Done"))))
 
 (defun gnuplot-fetch-version-number ()
   "Determine the installed version of the gnuplot program.
@@ -2450,7 +2450,7 @@ This is very similar to `comint-delchar-or-maybe-eof'."
   (interactive)
   (if (and gnuplot-process
 	   (eq (process-status gnuplot-process) 'run))  ;; <SE>
-      (delete-process gnuplot-process))
+      (kill-process gnuplot-process))
   (if (and gnuplot-buffer (get-buffer gnuplot-buffer))
       (progn
 	(if (one-window-p) ()
