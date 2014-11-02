@@ -2585,7 +2585,7 @@ updates Gnuplot with the appropriate 'set output' command."
 	      'gnuplot-discard-output nil t))
   (with-current-buffer (get-buffer-create gnuplot-hidden-output-buffer)
     (erase-buffer))
-  (comint-send-string gnuplot-process string))
+  (comint-send-string (get-buffer-process gnuplot-buffer) string))
 
 (defun gnuplot-discard-output (string)
   ;; Temporary preoutput filter for hiding Gnuplot output & prompt.
