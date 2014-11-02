@@ -2342,7 +2342,7 @@ buffer."
       (progn
 	(message "Starting gnuplot plotting program...")
 	(setq gnuplot-buffer (make-comint gnuplot-process-name gnuplot-program)
-	      gnuplot-process (get-process gnuplot-process-name))
+	      gnuplot-process (get-buffer-process gnuplot-buffer))
 	(process-kill-without-query gnuplot-process nil)
 	(with-current-buffer gnuplot-buffer
 	  (gnuplot-comint-mode)
