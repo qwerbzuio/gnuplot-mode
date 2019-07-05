@@ -1982,7 +1982,7 @@ called by this function after all of STRING is sent to gnuplot."
       (sleep-for (* 20 gnuplot-delay))
       (while list
 	(insert (car list))
-	(comint-send-input)
+	(comint-send-input nil 1)
 	(sleep-for gnuplot-delay)
 	(setq list (cdr list))
 	(goto-char (point-max))))
